@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compra - Tienda de Guitarras</title>
+  <style>
+    :root{
+      --bg:#fff8ec;
+      --panel:#fffefb;
+      --accent-1:#f7c948; /* amarillo principal */
+      --accent-2:#ffd86b; /* amarillo suave */
+      --muted:#6b5b3a;
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 8px 30px rgba(99,69,20,0.12);
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(180deg, #fffbe6 0%, #fff3cc 60%);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .page{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:40px 20px;
+    }
+
+    .card{
+      width:min(980px, 96%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), var(--panel));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:24px;
+      padding:26px;
+      position:relative;
+      overflow:visible;
+    }
+
+    /* soft glow around the form */
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius:calc(var(--radius) + 8px);
+      background: radial-gradient(600px 200px at 20% 10%, rgba(247,201,72,0.16), transparent 18%),
+                  radial-gradient(400px 150px at 90% 90%, rgba(255,216,107,0.12), transparent 18%);
+      z-index:0;
+      pointer-events:none;
+      filter: blur(10px);
+    }
+
+    /* Left column: product preview */
+    .preview{
+      position:relative;
+      padding:18px;
+      border-radius:12px;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
+      border:1px solid rgba(255,255,255,0.6);
+    }
+
+    .guitar-svg{
+      width:260px;
+      height:auto;
+      transform-origin:center bottom;
+      transition:transform 450ms cubic-bezier(.2,.9,.3,1);
+      will-change:transform;
+    }
+    /* ligera animación: flotación suave (no vibración) */
+    .guitar-svg.floating{
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%{ transform: translateY(0) rotate(-2deg) }
+      50%{ transform: translateY(-8px) rotate(2deg) }
+      100%{ transform: translateY(0) rotate(-2deg) }
+    }
+
+    .product-title{
+      font-weight:700;
+      font-size:1.15rem;
+      letter-spacing:0.2px;
+      color:#4c3620;
+      text-align:center;
+    }
+    .price{
+      font-size:1.35rem;
+      font-weight:800;
+      color: #7a4b09;
+    }
+    .badge{
+      padding:6px 10px;
+      background: linear-gradient(180deg,var(--accent-2),var(--accent-1));
+      color:#442f0a;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow: 0 6px 18px rgba(247,201,72,0.18);
+      font-size:0.9rem;
+    }
+
+    /* Right column: form */
+    form{
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      padding:6px 4px;
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
+    }
+    .col{
+      flex:1;
+    }
+    label{
+      font-size:0.85rem;
+      margin-bottom:6px;
+      display:inline-block;
+      color:#58422a;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid rgba(99,69,20,0.08);
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+      font-size:0.95rem;
+      transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+      outline:none;
+      color:#5b4630;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      box-shadow: 0 6px 20px rgba(247,201,72,0.18);
+      transform:translateY(-2px);
+      border-color: var(--accent-1);
+    }
+
+    .small{
+      font-size:0.82rem;
+      color:#7a6245;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:6px;
+    }
+
+    button{
+      cursor:pointer;
+      border:0;
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:0.95rem;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+
+    .btn-primary{
+      background: linear-gradient(180deg,var(--accent-1), #e9b33a);
+      color:#3b2709;
+      box-shadow: 0 8px 20px rgba(122,75,9,0.18);
+    }
+    .btn-primary:hover{ transform:translateY(-3px) }
+    .btn-ghost{
+      background:transparent;
+      color:#6b5b3a;
+      border:1px solid rgba(99,69,20,0.08);
+    }
+    .summary{
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.6);
+      font-size:0.95rem;
+    }
+
+    .summary-row{
+      display:flex;
+      justify-content:space-between;
+      margin:6px 0;
+    }
+
+    /* responsive */
+    @media (max-width:880px){
+      .card{ grid-template-columns: 1fr; }
+      .guitar-svg{ width:200px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="card" aria-labelledby="order-title">
+      <!-- LEFT: product preview -->
+      <div class="preview" aria-hidden="false">
+        <!-- Guitar SVG (simple) -->
+        <svg class="guitar-svg floating" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de guitarra">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#ffd86b"/>
+              <stop offset="1" stop-color="#f7c948"/>
+            </linearGradient>
+            <filter id="shine" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- body -->
+          <ellipse cx="185" cy="160" rx="70" ry="92" fill="url(#g1)" stroke="#ddb24a" stroke-width="3" />
+          <!-- pickguard -->
+          <path d="M140 150 C150 145 165 145 170 160 C175 175 150 180 140 170 Z" fill="#2b2b2b" opacity="0.07"/>
+          <!-- neck -->
+          <rect x="42" y="95" width="160" height="20" rx="6" ry="6" fill="#6b3f1a" transform="rotate(-20 122 105)"/>
+          <!-- head -->
+          <ellipse cx="30" cy="72" rx="14" ry="10" fill="#5b3616" transform="rotate(-20 30 72)"/>
+          <!-- strings (stylized) -->
+          <g stroke="#fff8ea" stroke-opacity="0.6" stroke-width="1.2" transform="rotate(-20 120 100)">
+            <line x1="50" y1="95" x2="220" y2="95"/>
+            <line x1="50" y1="100" x2="220" y2="100"/>
+            <line x1="50" y1="105" x2="220" y2="105"/>
+            <line x1="50" y1="110" x2="220" y2="110"/>
+            <line x1="50" y1="115" x2="220" y2="115"/>
+          </g>
+        </svg>
+
+        <div class="product-title" id="order-title">Guitarra Classic Sunburst</div>
+        <div class="price" id="price-label">$1,799 MXN</div>
+        <div class="badge">En stock • Envío rápido</div>
+      </div>
+
+      <!-- RIGHT: form -->
+      <form id="orderForm" novalidate>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <h2 style="margin:0;color:#4d3720">Finaliza tu compra</h2>
+            <div class="small">Rellena los datos para generar tu pedido</div>
+          </div>
+          <div class="small">Pedido seguro • Pago protegido</div>
+        </div>
+
+        <!-- buyer info -->
+        <div class="row" style="margin-top:6px;">
+          <div class="col">
+            <label for="fullname">Nombre completo</label>
+            <input id="fullname" name="fullname" type="text" placeholder="Ej. Juan Pérez" required>
+          </div>
+          <div class="col">
+            <label for="phone">Teléfono</label>
+            <input id="phone" name="phone" type="tel" placeholder="10 dígitos" pattern="[0-9\s\-()+]{7,20}" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" placeholder="correo@ejemplo.com" required>
+          </div>
+          <div class="col">
+            <label for="qty">Cantidad</label>
+            <input id="qty" name="qty" type="number" value="1" min="1" max="10" required>
+          </div>
+        </div>
+
+        <div>
+          <label for="address">Dirección de envío</label>
+          <textarea id="address" name="address" rows="2" placeholder="Calle, número, colonia, ciudad, CP" required></textarea>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="model">Modelo</label>
+            <select id="model" name="model" required>
+              <option value="classic-sunburst">Classic Sunburst (incluye funda)</option>
+              <option value="electro-black">Electro Black (con pastillas)</option>
+              <option value="acoustic-nature">Acoustic Nature</option>
+              <option value="signature-20">Signature '20</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="color">Color</label>
+            <select id="color" name="color" required>
+              <option value="sunburst">Sunburst</option>
+              <option value="natural">Natural</option>
+              <option value="black">Negro</option>
+              <option value="red">Rojo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="shipping">Método de entrega</label>
+            <select id="shipping" name="shipping" required>
+              <option value="courier">Courier (3-5 días) • $150</option>
+              <option value="store-pickup">Recoger en tienda (gratis)</option>
+              <option value="express">Express (1-2 días) • $320</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="payment">Pago</label>
+            <select id="payment" name="payment" required>
+              <option value="card">Tarjeta (simulada)</option>
+              <option value="paypal">PayPal</option>
+              <option value="cash">Pago contra entrega</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="summary" aria-live="polite">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Resumen</strong>
+            <small id="summary-model" class="small">Classic Sunburst • 1</small>
+          </div>
+          <div class="summary-row"><span>Subtotal</span><span id="summary-sub">$1,799 MXN</span></div>
+          <div class="summary-row"><span>Envío</span><span id="summary-ship">$150 MXN</span></div>
+          <div class="summary-row" style="font-weight:800;"><span>Total</span><span id="summary-total">$1,949 MXN</span></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-ghost" id="resetBtn">Limpiar</button>
+          <button type="submit" class="btn-primary" id="placeOrderBtn">Revisar pedido</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Modal de confirmación simple -->
+  <div id="modal" role="dialog" aria-modal="true" aria-hidden="true" style="position:fixed;inset:0;display:grid;place-items:center;background:rgba(10,10,10,0.35);visibility:hidden;opacity:0;transition:opacity .18s ease, visibility .18s;">
+    <div style="width:min(640px,92%);background:white;border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,0.28);">
+      <h3 style="margin:0 0 8px 0;color:#3d2711">Confirma tu pedido</h3>
+      <div id="orderDetails" style="font-size:0.95rem;color:#5a4430"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
+        <button id="cancel" class="btn-ghost">Cancelar</button>
+        <button id="confirm" class="btn-primary">Confirmar compra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  <div id="successToast" role="status" aria-live="polite" style="position:fixed;right:18px;bottom:18px;background:linear-gradient(180deg,var(--accent-1),var(--accent-2));padding:12px 14px;border-radius:10px;color:#3b2709;box-shadow:0 8px 20px rgba(122,75,9,0.14);transform:translateY(10px);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;">
+    Pedido confirmado. ¡Gracias por tu compra!
+  </div>
+
+  <script>
+    // Datos base
+    const basePrice = 1799; // MXN
+    const shippingCosts = { 'courier':150, 'store-pickup':0, 'express':320 };
+
+    const form = document.getElementById('orderForm');
+    const qty = document.getElementById('qty');
+    const model = document.getElementById('model');
+    const shipping = document.getElementById('shipping');
+    const summaryModel = document.getElementById('summary-model');
+    const summarySub = document.getElementById('summary-sub');
+    const summaryShip = document.getElementById('summary-ship');
+    const summaryTotal = document.getElementById('summary-total');
+    const priceLabel = document.getElementById('price-label');
+
+    function formatMoney(n){
+      return n.toLocaleString('es-MX', { style:'currency', currency:'MXN', maximumFractionDigits:0 });
+    }
+
+    function updateSummary(){
+      const q = Math.max(1, parseInt(qty.value || 1));
+      const shipKey = shipping.value;
+      const ship = shippingCosts[shipKey] || 0;
+      const sub = basePrice * q;
+      const total = sub + ship;
+      summaryModel.textContent = model.options[model.selectedIndex].text + " • " + q;
+      summarySub.textContent = formatMoney(sub);
+      summaryShip.textContent = ship === 0 ? 'Gratis' : formatMoney(ship);
+      summaryTotal.textContent = formatMoney(total);
+      priceLabel.textContent = formatMoney(basePrice);
+    }
+
+    // eventos
+    qty.addEventListener('input', updateSummary);
+    shipping.addEventListener('change', updateSummary);
+    model.addEventListener('change', updateSummary);
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      form.reset();
+      qty.value = 1;
+      updateSummary();
+    });
+
+    // submit -> show modal con resumen para confirmar
+    const modal = document.getElementById('modal');
+    const orderDetails = document.getElementById('orderDetails');
+    const successToast = document.getElementById('successToast');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // validación simple
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+
+      // construir resumen
+      const formData = new FormData(form);
+      const entries = Object.fromEntries(formData.entries());
+
+      const q = Math.max(1, parseInt(entries.qty||1));
+      const shipName = shipping.options[shipping.selectedIndex].text;
+      const sub = basePrice * q;
+      const ship = shippingCosts[shipping.value] || 0;
+      const total = sub + ship;
+
+      orderDetails.innerHTML = `
+        <div><strong>Cliente:</strong> ${entries.fullname} • ${entries.phone} • ${entries.email}</div>
+        <div style="margin-top:8px;"><strong>Dirección:</strong> ${entries.address}</div>
+        <div style="margin-top:8px;"><strong>Producto:</strong> ${model.options[model.selectedIndex].text} — ${entries.color} • Cantidad: ${q}</div>
+        <div style="margin-top:8px;"><strong>Método de envío:</strong> ${shipName}</div>
+        <div style="margin-top:10px; font-weight:800;"><strong>Total:</strong> ${formatMoney(total)}</div>
+      `;
+
+      // mostrar modal
+      modal.style.visibility = 'visible';
+      modal.style.opacity = '1';
+      modal.setAttribute('aria-hidden','false');
+    });
+
+    // cancelar modal
+    document.getElementById('cancel').addEventListener('click', () => {
+      modal.style.opacity = '0';
+      modal.style.visibility = 'hidden';
+      modal.setAttribute('aria-hidden','true');
+    });
+
+    // confirmar compra (simulación)
+    document.getElementById('confirm').addEventListener('click', () => {
+      // Aquí podrías hacer una petición fetch a tu backend o a un endpoint de pago.
+      modal.style.opacity = '0';
+      modal.style.visibility = 'hidden';
+      modal.setAttribute('aria-hidden','true');
+
+      // Mostrar toast de éxito
+      successToast.style.opacity = '1';
+      successToast.style.transform = 'translateY(0)';
+      successToast.style.pointerEvents = 'auto';
+
+      setTimeout(()=> {
+        successToast.style.opacity = '0';
+        successToast.style.transform = 'translateY(10px)';
+        successToast.style.pointerEvents = 'none';
+      }, 4000);
+
+      // Reiniciar form (opcional)
+      form.reset();
+      qty.value = 1;
+      updateSummary();
+    });
+
+    // init
+    qty.value = 1;
+    updateSummary();
+  </script>
+</body>
+</html>
