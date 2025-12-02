@@ -315,10 +315,11 @@
           <div class="col">
             <label for="color">Color</label>
             <select id="color" name="color" required>
-              <option value="sunburst">Sunburst</option>
-              <option value="natural">Natural</option>
+              <option value="sunburst">Morado</option>
+              <option value="natural">Naranja</option>
               <option value="black">Negro</option>
               <option value="red">Rojo</option>
+              <option value="sunburst">Rosa</option>
             </select>
           </div>
         </div>
@@ -379,7 +380,11 @@
 
   <script>
     // Datos base
-    const basePrice = 1799; // MXN
+    function getBasePrice(){
+      const option = model.options[model.selectedIndex];
+      return parseInt(option.dataset.price || 0);
+    }
+ // MXN
     const shippingCosts = { 'courier':150, 'store-pickup':0, 'express':320 };
 
     const form = document.getElementById('orderForm');
@@ -397,16 +402,22 @@
     }
 
     function updateSummary(){
-      const q = Math.max(1, parseInt(qty.value || 1));
+      const q = Math.max(0, parseInt(qty.value || 0)); // permite 0
+      const price = getBasePrice();
+      const sub = q === 0 ? 0 : price * q;
+
       const shipKey = shipping.value;
-      const ship = shippingCosts[shipKey] || 0;
-      const sub = basePrice * q;
+      const ship = q === 0 ? 0 : (shippingCosts[shipping.value] || 0);
+    
       const total = sub + ship;
+    
       summaryModel.textContent = model.options[model.selectedIndex].text + " • " + q;
       summarySub.textContent = formatMoney(sub);
       summaryShip.textContent = ship === 0 ? 'Gratis' : formatMoney(ship);
       summaryTotal.textContent = formatMoney(total);
-      priceLabel.textContent = formatMoney(basePrice);
+    
+      // Actualiza el precio principal mostrado
+      priceLabel.textContent = formatMoney(price);
     }
 
     // eventos
@@ -495,4 +506,5 @@
   </script>
 </body>
 </html>
+
 
