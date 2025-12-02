@@ -294,12 +294,22 @@
 
         <div class="row">
           <div class="col">
-            <label for="model">Modelo</label>
+            <label for="model">Producto</label>
             <select id="model" name="model" required>
-              <option value="classic-sunburst">Classic Sunburst (incluye funda)</option>
-              <option value="electro-black">Electro Black (con pastillas)</option>
-              <option value="acoustic-nature">Acoustic Nature</option>
-              <option value="signature-20">Signature '20</option>
+              <option value="donner" data-price="1300">Guitarra eléctrica Donner DST-100 — $1300 MXN</option>
+            
+              <option value="squier-black" data-price="2697">Fender Squier Debut Negra Collection Stratocaster — $2697 MXN</option>
+              <option value="squier-red" data-price="2640">Fender Squier Debut Roja Collection Stratocaster — $2640 MXN</option>
+              <option value="squier-brown" data-price="2879">Fender Squier Debut Café Collection Stratocaster — $2879 MXN</option>
+            
+              <option value="frontman20g" data-price="2190">Fender Frontman 20G — $2190 MXN</option>
+              <option value="leo-jaymz" data-price="1159">Leo Jaymz — $1159 MXN</option>
+            
+              <option value="spark-mini" data-price="4371">Positive Grid Spark Mini (amplificador) — $4371 MXN</option>
+            
+              <option value="ernie-picks" data-price="109">Ernie Ball Everlast • 0.60mm • 12 pzs • rosa — $109 MXN</option>
+              <option value="dunlop-jazz3" data-price="176">Dunlop 482P.50 Tortex Pitch Black Jazz III • 12 pzs • 1.14mm — $176 MXN</option>
+              <option value="tortex-purple" data-price="154">Jim Dunlop Tortex Standard • 1.14mm • morado • 12 pzs — $154 MXN</option>
             </select>
           </div>
           <div class="col">
@@ -317,17 +327,17 @@
           <div class="col">
             <label for="shipping">Método de entrega</label>
             <select id="shipping" name="shipping" required>
-              <option value="courier">Courier (3-5 días) • $150</option>
               <option value="store-pickup">Recoger en tienda (gratis)</option>
-              <option value="express">Express (1-2 días) • $320</option>
+              <option value="courier">Envío terrestre (4 - 6 días) • $150</option>
+              <option value="express">Envío express (1 - 2 días) • $320</option>
             </select>
           </div>
           <div class="col">
             <label for="payment">Pago</label>
             <select id="payment" name="payment" required>
-              <option value="card">Tarjeta (simulada)</option>
+              <option value="card">Tarjeta de crédito o débito</option>
               <option value="paypal">PayPal</option>
-              <option value="cash">Pago contra entrega</option>
+              <option value="cash">Efectivo</option>
             </select>
           </div>
         </div>
@@ -485,3 +495,4 @@
   </script>
 </body>
 </html>
+
