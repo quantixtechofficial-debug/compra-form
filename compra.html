@@ -146,98 +146,85 @@
     </main>
 
 
-  <script>
-    // --- CONFIG ---
-    // Reemplaza por la URL de tu Google Apps Script (Web App) o endpoint que procese el pedido.
-    const ACTION_URL = 'https://script.google.com/macros/s/AKfycbxnfK7ucqHGzlZ6QgpDb2k6FNyWGyzQgYq-RseouMPnggjMacSER-gi9rdcPhLuxnPB/exec';
+ <script>
+  // --- CONFIG ---
+  const ACTION_URL = 'https://script.google.com/macros/s/AKfycbzIOJ810jbXmozgggmOvva8iv570uQBx5etvpnu_WJvceyNt8YGjFx7S9y_2f8ZKs4/exec';
 
-    const form = document.getElementById('purchaseForm');
-    const submitBtn = document.getElementById('submitBtn');
+  const form = document.getElementById('purchaseForm');
+  const submitBtn = document.getElementById('submitBtn');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;submitBtn.textContent = 'Enviando...';
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
 
-      const data = new FormData(form);
-      try{
-        // Envío como POST al endpoint. Ajusta según lo que tu script espere (JSON o form-data).
-        const resp = await fetch(ACTION_URL, {
-          method: 'POST',
-          body: data
-        });
+    const data = new FormData(form);
 
-        if(!resp.ok) throw new Error('Error en el servidor: '+resp.status);
+    try{
+      const resp = await fetch(ACTION_URL, {
+        method: 'POST',
+        body: data
+      });
 
-        // Intentamos leer respuesta JSON o texto
-        let text = '';
-        try{ text = await resp.text(); }catch(e){ text = 'Pedido enviado.' }
+      if(!resp.ok) throw new Error('Error en el servidor: ' + resp.status);
 
-        document.getElementById("submitBtn").disabled = true;
-        document.getElementById("submitBtn").innerText = "Pedido enviado ✔";
-        form.reset();
-      }catch(err){
-        console.error(err);
-        alert('No se pudo enviar el pedido. Revisa la consola y la URL de ACTION_URL.');
-      }finally{
-        submitBtn.disabled = false;submitBtn.textContent = 'Enviar pedido';
-      }
-    });
-  
-    // --- Lógica: precio e imagen ---
-    const modelSelect = document.getElementById('model');
-    const priceDisplay = document.getElementById('priceDisplay');
-    const preview = document.getElementById('modelPreview');
+      await resp.text(); 
 
-    const quantityInput = document.getElementById('quantity');
-
-    function updatePrice(){
-      const opt = modelSelect.selectedOptions[0];
-      if (!opt) return;
-
-      const price = Number(opt.dataset.price || 0);
-      const qty = Number(quantityInput.value || 1);
-      const img = opt.dataset.img || '';
-
-      const total = price * qty;
-
-      priceDisplay.textContent = `$${price} MXN (c/u)`;
-      totalDisplay.textContent = `Total: $${total} MXN`;
-
-      if (img){ preview.src = img; preview.style.display = 'block'; }
-      else{ preview.style.display = 'none'; }
+      submitBtn.textContent = "Pedido enviado ✔";
+      form.reset();
+      
+    }catch(err){
+      console.error(err);
+      alert('No se pudo enviar el pedido. Revisa URL y consola.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar pedido';
     }
+  });
 
-    modelSelect.addEventListener('change', updatePrice);
-    quantityInput.addEventListener('input', updatePrice);('change', () => {
-      const opt = modelSelect.selectedOptions[0];
-      if (!opt) return;
+  // --- Lógica: precio e imagen ---
+  const modelSelect = document.getElementById('model');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const preview = document.getElementById('modelPreview');
+  const quantityInput = document.getElementById('quantity');
+  const totalDisplay = document.getElementById('totalDisplay');
 
-      const price = opt.dataset.price || 0;
-      const img = opt.dataset.img || '';
+  function updatePrice(){
+    const opt = modelSelect.selectedOptions[0];
+    if (!opt) return;
 
-      priceDisplay.textContent = `$${price} MXN`;
+    const price = Number(opt.dataset.price || 0);
+    const qty = Number(quantityInput.value || 1);
+    const img = opt.dataset.img || '';
 
-      if (img) {
-        preview.src = img;
-        preview.style.display = 'block';
-      } else {
-        preview.style.display = 'none';
-      }
-    });
+    const total = price * qty;
 
-    // --- Selección basada en URL ---
-const params = new URLSearchParams(window.location.search);
-const productoParam = params.get("producto");
+    priceDisplay.textContent = `$${price} MXN (c/u)`;
+    totalDisplay.textContent = `Total: $${total} MXN`;
 
-if(productoParam){
-  modelSelect.value = productoParam;
-  updatePrice();
-}
+    if (img){
+      preview.src = img;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  }
 
+  modelSelect.addEventListener('change', updatePrice);
+  quantityInput.addEventListener('input', updatePrice);
 
-  </script>
+  // --- Selección basada en URL ---
+  const params = new URLSearchParams(window.location.search);
+  const productoParam = params.get("producto");
+
+  if(productoParam){
+    modelSelect.value = productoParam;
+    updatePrice();
+  }
+</script>
+
 </body>
 </html>
+
 
 
 
