@@ -172,7 +172,8 @@
         let text = '';
         try{ text = await resp.text(); }catch(e){ text = 'Pedido enviado.' }
 
-        alert('Pedido enviado correctamente.\n' + text);
+        document.getElementById("submitBtn").disabled = true;
+        document.getElementById("submitBtn").innerText = "Pedido enviado ✔";
         form.reset();
       }catch(err){
         console.error(err);
@@ -237,6 +238,7 @@ if(productoParam){
   </script>
 </body>
 </html>
+
 
 
 
